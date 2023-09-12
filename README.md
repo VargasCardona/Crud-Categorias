@@ -1,2 +1,4 @@
 # Crud-Categorias
-Ejercicio de CRUD para categorias
+Ejercicio realizado por:
+- Nicolás Vargas Cardona
+- Mateo Loaiza García
