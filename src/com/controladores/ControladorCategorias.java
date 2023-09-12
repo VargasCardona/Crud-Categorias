@@ -7,6 +7,8 @@ import com.utils.Utils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 
 public class ControladorCategorias {
 
@@ -86,4 +88,25 @@ public class ControladorCategorias {
 			System.err.print(ex);
 		}
 	}
+        
+    public ArrayList<String> getAllCategories() {
+        ArrayList<String> categorias = new ArrayList<>();
+
+        try {            
+            ResultSet rs;
+
+            String query = "SELECT * FROM categorias";
+
+            PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                categorias.add(id);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.toString());
+        }
+        return categorias;
+    }
 }
