@@ -1,16 +1,21 @@
 package com.vistas;
 
+import com.controladores.ControladorCategorias;
 import com.controladores.ControladorGeneral;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class VistaRegistrar extends javax.swing.JFrame {
 
 	ControladorGeneral controlador;
+        ControladorCategorias controladorCategorias;
 	VistaPrincipal vistaPrincipal;
 
 	public VistaRegistrar(VistaPrincipal vistaPrincipal) {
 		controlador = new ControladorGeneral();
+                controladorCategorias = new ControladorCategorias();
 		this.vistaPrincipal = vistaPrincipal;
 
 		this.setLocationRelativeTo(null);
@@ -32,9 +37,9 @@ public class VistaRegistrar extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txtPrecio = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
-        txtCategoria = new javax.swing.JTextField();
         txtDistribuidor = new javax.swing.JTextField();
         btnRegistrar = new javax.swing.JButton();
+        cmbxCategorias = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -58,7 +63,6 @@ public class VistaRegistrar extends javax.swing.JFrame {
         bg.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
         bg.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 240, -1));
         bg.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 60, 240, -1));
-        bg.add(txtCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, 240, -1));
         bg.add(txtDistribuidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 140, 240, -1));
 
         btnRegistrar.setText("Registrar");
@@ -68,6 +72,8 @@ public class VistaRegistrar extends javax.swing.JFrame {
             }
         });
         bg.add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 320, 30));
+
+        bg.add(cmbxCategorias, new org.netbeans.lib.awtextra.AbsoluteConstraints(102, 180, 240, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,7 +94,7 @@ public class VistaRegistrar extends javax.swing.JFrame {
 			controlador.insertarTabla(txtNombre.getText(),
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
-					txtCategoria.getText());
+					cmbxCategorias.getSelectedItem().toString());
 
 			this.dispose();
 			vistaPrincipal.actualizarTablaProductos("");
@@ -99,15 +105,27 @@ public class VistaRegistrar extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    private void setCbxCategoria() {
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        cmbxCategorias.setModel(model);
+
+        ArrayList<String> categorias = controladorCategorias.getAllCategories();
+        model.addElement("Seleccione una categoría"); // Agrega la opción predeterminada
+
+        for (String categoria : categorias) {
+            model.addElement(categoria); // Agrega los nombres de las categorías al ComboBoxModel
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton btnRegistrar;
+    private javax.swing.JComboBox<String> cmbxCategorias;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtDistribuidor;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrecio;
