@@ -1,16 +1,16 @@
 package com.vistas;
 
-import com.controladores.ControladorGeneral;
+import com.controladores.ControladorCategorias;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class VistaRegistrarCategorias extends javax.swing.JFrame {
 
-	ControladorGeneral controlador;
+	ControladorCategorias controlador;
 	VistaPrincipal vistaPrincipal;
 
 	public VistaRegistrarCategorias(VistaPrincipal vistaPrincipal) {
-		controlador = new ControladorGeneral();
+		controlador = new ControladorCategorias();
 		this.vistaPrincipal = vistaPrincipal;
 
 		this.setLocationRelativeTo(null);
@@ -73,7 +73,7 @@ public class VistaRegistrarCategorias extends javax.swing.JFrame {
 
 			this.dispose();
 			vistaPrincipal.actualizarTabla("");
-			JOptionPane.showMessageDialog(null, "Producto registrado");
+			JOptionPane.showMessageDialog(null, "Categoria registrada");
 
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());

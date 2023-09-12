@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class ConexionDB {
 
-	private final String BASE = "productos";
+	private final String BASE = "taller_foraneas";
 	private final String USUARIO = "root";
 	private final String CONTRASENIA = "";
 

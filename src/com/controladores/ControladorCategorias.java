@@ -1,7 +1,6 @@
 package com.controladores;
 
 import com.excepciones.CamposVaciosException;
-import com.excepciones.DoubleInvalidoException;
 import com.excepciones.ElementoNoSeleccionadoException;
 import com.utils.ConexionUtils;
 import com.utils.Utils;
@@ -11,25 +10,15 @@ import java.sql.ResultSet;
 
 public class ControladorCategorias {
 
-	public void insertarTabla(String nombre, String precio, String distribuidor, String categoria) {
-		if (Utils.estaVacio(nombre)
-				|| Utils.estaVacio(precio)
-				|| Utils.estaVacio(distribuidor)
-				|| Utils.estaVacio(categoria)) {
+	public void insertarTabla(String nombre) {
+		if (Utils.estaVacio(nombre)) {
 			throw new CamposVaciosException();
 		}
 
-		if (!Utils.esDouble(precio)) {
-			throw new DoubleInvalidoException();
-		}
-
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, categoria) VALUES (?, ?, ?, ? ,?)");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO categorias (id, nombre) VALUES (?, ?)");
 			ps.setString(1, Utils.generarSku(nombre));
 			ps.setString(2, nombre);
-			ps.setString(3, precio);
-			ps.setString(4, distribuidor);
-			ps.setString(5, categoria);
 
 			ps.execute();
 
@@ -40,7 +29,7 @@ public class ControladorCategorias {
 
 	public ResultSet listarTabla() {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias");
 
 			return ps.executeQuery();
 		} catch (SQLException ex) {
@@ -49,21 +38,9 @@ public class ControladorCategorias {
 		return null;
 	}
 
-	public ResultSet buscarCoincidencias(String where) {
+	public ResultSet consultarId(String sku) {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos WHERE sku LIKE CONCAT('%',?,'%')");
-			ps.setString(1, where);
-
-			return ps.executeQuery();
-		} catch (SQLException ex) {
-			System.err.print(ex);
-		}
-		return null;
-	}
-
-	public ResultSet consultarSku(String sku) {
-		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos WHERE sku = ?");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias WHERE id = ?");
 			ps.setString(1, sku);
 
 			return ps.executeQuery();
@@ -73,29 +50,19 @@ public class ControladorCategorias {
 		return null;
 	}
 
-	public void actualizarTabla(String sku, String nombre, String precio, String distribuidor, String categoria) {
-		if (Utils.estaVacio(sku)) {
+	public void actualizarTabla(String id, String nombre) {
+		if (Utils.estaVacio(id)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 
-		if (Utils.estaVacio(nombre)
-				|| Utils.estaVacio(precio)
-				|| Utils.estaVacio(distribuidor)
-				|| Utils.estaVacio(categoria)) {
+		if (Utils.estaVacio(nombre)) {
 			throw new CamposVaciosException();
 		}
 
-		if (!Utils.esDouble(precio)) {
-			throw new DoubleInvalidoException();
-		}
-
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("UPDATE productos SET nombre = ?, precio = ?, distribuidor = ?, categoria = ? WHERE sku = ?");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("UPDATE categorias SET nombre = ? WHERE id = ?");
 			ps.setString(1, nombre);
-			ps.setString(2, precio);
-			ps.setString(3, distribuidor);
-			ps.setString(4, categoria);
-			ps.setString(5, sku);
+			ps.setString(5, id);
 
 			ps.execute();
 
@@ -104,14 +71,14 @@ public class ControladorCategorias {
 		}
 	}
 
-	public void eliminarTabla(String sku) {
-		if (Utils.estaVacio(sku)) {
+	public void eliminarTabla(String id) {
+		if (Utils.estaVacio(id)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("DELETE FROM productos WHERE sku = ?");
-			ps.setString(1, sku);
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("DELETE FROM categorias WHERE id = ?");
+			ps.setString(1, id);
 
 			ps.execute();
 
