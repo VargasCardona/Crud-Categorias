@@ -72,7 +72,7 @@ public class VistaRegistrarCategorias extends javax.swing.JFrame {
 			controlador.insertarTabla(txtNombre.getText());
 
 			this.dispose();
-			vistaPrincipal.actualizarTabla("");
+			vistaPrincipal.actualizarTablaCategorias();
 			JOptionPane.showMessageDialog(null, "Categoria registrada");
 
 		} catch (Exception ex) {

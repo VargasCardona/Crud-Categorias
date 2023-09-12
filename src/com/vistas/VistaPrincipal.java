@@ -1,5 +1,6 @@
 package com.vistas;
 
+import com.controladores.ControladorCategorias;
 import com.controladores.ControladorGeneral;
 import com.utils.Utils;
 import java.sql.ResultSet;
@@ -10,50 +11,57 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class VistaPrincipal extends javax.swing.JFrame {
-	
+
 	ControladorGeneral controlador;
-	
+	ControladorCategorias controladorCategorias;
+
 	public VistaPrincipal() {
 		controlador = new ControladorGeneral();
-		
+		controladorCategorias = new ControladorCategorias();
+
 		this.setLocationRelativeTo(null);
 		setTitle("Buscar Productos");
-		
+
 		initComponents();
 
-		actualizarTabla("");
+		actualizarTablaProductos("");
 		tblProductos.setDefaultEditor(Object.class, null); // Evitar ediciones en la tabla
 		tblProductos.getTableHeader().setEnabled(false); // Evitar reorganizaciones de Headers en la tabla
 		tblProductos.setCellSelectionEnabled(false); // Evitar selecciones en la tabla
+
+		actualizarTablaCategorias();
+		tblCategorias.setDefaultEditor(Object.class, null); // Evitar ediciones en la tabla
+		tblCategorias.getTableHeader().setEnabled(false); // Evitar reorganizaciones de Headers en la tabla
+		tblCategorias.setCellSelectionEnabled(false); // Evitar selecciones en la tabla
 	}
-	
-	public void actualizarTabla(String where) {
+
+	public void actualizarTablaProductos(String where) {
 		try {
 			DefaultTableModel modelo = new DefaultTableModel();
 			tblProductos.setModel(modelo);
-			
+
 			ResultSet rs = null;
-			
+
 			if (where.isEmpty()) {
 				rs = controlador.listarTabla();
 			} else {
 				rs = controlador.buscarCoincidencias(where);
 			}
-			
+
 			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
 			int cantidadColumnas = rsMd.getColumnCount();
-			
+
 			modelo.addColumn("SKU:");
 			modelo.addColumn("Nombre:");
 			modelo.addColumn("Precio:");
 			modelo.addColumn("Distribuidor:");
 			modelo.addColumn("Categorias:");
-			
+
 			int[] anchos = {50, 50, 50, 50, 50};
 			for (int i = 0; i < tblProductos.getColumnCount(); i++) {
 				tblProductos.getColumnModel().getColumn(i).setPreferredWidth(anchos[1]);
 			}
-			
+
 			Object[] filas = new Object[cantidadColumnas];
 			while (rs.next()) {
 				for (int i = 0; i < cantidadColumnas; i++) {
@@ -61,18 +69,49 @@ public class VistaPrincipal extends javax.swing.JFrame {
 				}
 				modelo.addRow(filas);
 			}
-			
+
 			if (modelo.getRowCount() == 0) {
 				lblResultados.setText("No se han encontrado coincidencias");
 			} else {
 				lblResultados.setText(" ");
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void actualizarTablaCategorias() {
+		try {
+			DefaultTableModel modelo = new DefaultTableModel();
+			tblCategorias.setModel(modelo);
+
+			ResultSet rs = controladorCategorias.listarTabla();
+
+			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+			int cantidadColumnas = rsMd.getColumnCount();
+
+			modelo.addColumn("ID:");
+			modelo.addColumn("Nombre:");
+
+			int[] anchos = {50, 50};
+			for (int i = 0; i < tblCategorias.getColumnCount(); i++) {
+				tblCategorias.getColumnModel().getColumn(i).setPreferredWidth(anchos[1]);
+			}
+
+			Object[] filas = new Object[cantidadColumnas];
+			while (rs.next()) {
+				for (int i = 0; i < cantidadColumnas; i++) {
+					filas[i] = rs.getObject(i + 1);
+				}
+				modelo.addRow(filas);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -252,7 +291,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Buscar por SKU");
         bg.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 370, 50));
-        bg.add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 470, 200, 20));
+        bg.add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 200, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -272,9 +311,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void txtSkuKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSkuKeyReleased
 		if (!txtSku.getText().equals("")) {
-			actualizarTabla(txtSku.getText());
+			actualizarTablaProductos(txtSku.getText());
 		} else {
-			actualizarTabla("");
+			actualizarTablaProductos("");
 		}
     }//GEN-LAST:event_txtSkuKeyReleased
 
@@ -285,11 +324,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
 					txtCategoria.getText());
-			
-			actualizarTabla("");
-			
+
+			actualizarTablaProductos("");
+
 			JOptionPane.showMessageDialog(null, "El producto se ha actualizado con exito");
-			
+
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
 		}
@@ -298,14 +337,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 		try {
 			controlador.eliminarTabla(lblSku.getText());
-			
+
 			txtSku.setText("");
-			actualizarTabla("");
-			
-			limpiarCampos();
+			actualizarTablaProductos("");
+
+			limpiarCamposProducto();
 			JOptionPane.showMessageDialog(null, "Se ha eliminado con exito");
-			
-			
+
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
 		}
@@ -319,52 +357,87 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private void tblProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductosMouseClicked
 		String sku = String.valueOf(tblProductos.getValueAt(tblProductos.getSelectedRow(), 0));
 		try {
-			
+
 			ResultSet rs = controlador.consultarSku(sku);
 			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-			
+
 			int cantidadColumnas = rsMd.getColumnCount();
-			
+
 			Object[] filas = new Object[cantidadColumnas];
 			while (rs.next()) {
 				for (int i = 0; i < cantidadColumnas; i++) {
 					filas[i] = rs.getObject(i + 1);
 				}
 			}
-			
+
 			lblSku.setText((String) filas[0]);
 			txtNombre.setText((String) filas[1]);
 			txtPrecio.setText(String.valueOf((Double) filas[2]));
 			txtDistribuidor.setText((String) filas[3]);
 			txtCategoria.setText((String) filas[4]);
-			
+
 		} catch (SQLException ex) {
 			System.out.println(ex.getMessage());
 		}
     }//GEN-LAST:event_tblProductosMouseClicked
 
     private void tblCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriasMouseClicked
-        // TODO add your handling code here:
+		String id = String.valueOf(tblCategorias.getValueAt(tblCategorias.getSelectedRow(), 0));
+		try {
+
+			ResultSet rs = controladorCategorias.consultarId(id);
+			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+
+			int cantidadColumnas = rsMd.getColumnCount();
+
+			Object[] filas = new Object[cantidadColumnas];
+			while (rs.next()) {
+				for (int i = 0; i < cantidadColumnas; i++) {
+					filas[i] = rs.getObject(i + 1);
+				}
+			}
+
+			lblId.setText((String) filas[0]);
+			txtNombreCategoria.setText((String) filas[1]);
+
+		} catch (SQLException ex) {
+			System.out.println(ex.getMessage());
+		}
     }//GEN-LAST:event_tblCategoriasMouseClicked
 
     private void btnActualizarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarCategoriaActionPerformed
-        // TODO add your handling code here:
+		try {
+			controladorCategorias.actualizarTabla(lblSku.getText(),
+					txtNombre.getText());
+
+			actualizarTablaCategorias();
+
+			JOptionPane.showMessageDialog(null, "La categoria se ha actualizado con exito");
+
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		}
     }//GEN-LAST:event_btnActualizarCategoriaActionPerformed
 
     private void btnEliminarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCategoriaActionPerformed
-        // TODO add your handling code here:
+		// TODO add your handling code here:
     }//GEN-LAST:event_btnEliminarCategoriaActionPerformed
 
     private void btnRegistrarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarCategoriaActionPerformed
-        // TODO add your handling code here:
+		VistaRegistrarCategorias vista = new VistaRegistrarCategorias(this);
+		vista.setVisible(true);
     }//GEN-LAST:event_btnRegistrarCategoriaActionPerformed
-	
-	private void limpiarCampos() {
+
+	private void limpiarCamposProducto() {
 		lblSku.setText("");
 		txtNombre.setText("");
 		txtPrecio.setText("");
 		txtDistribuidor.setText("");
-		txtCategoria.setText("");
+	}
+
+	private void limpiarCamposCategoria() {
+		lblId.setText("");
+		txtNombreCategoria.setText("");
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
