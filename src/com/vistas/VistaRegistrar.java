@@ -3,6 +3,8 @@ package com.vistas;
 import com.controladores.ControladorCategorias;
 import com.controladores.ControladorGeneral;
 import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,15 +15,16 @@ public class VistaRegistrar extends javax.swing.JFrame {
         ControladorCategorias controladorCategorias;
 	VistaPrincipal vistaPrincipal;
 
-	public VistaRegistrar(VistaPrincipal vistaPrincipal) {
+	public VistaRegistrar(VistaPrincipal vistaPrincipal) throws SQLException {
 		controlador = new ControladorGeneral();
                 controladorCategorias = new ControladorCategorias();
 		this.vistaPrincipal = vistaPrincipal;
 
 		this.setLocationRelativeTo(null);
 		setTitle("Registrar Producto");
-
-		initComponents();
+                
+                initComponents();
+                setCmbxCategoria();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cerrar unicamente la ventana actual
 	}
 
@@ -90,11 +93,12 @@ public class VistaRegistrar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-		try {
+		String idCategoria = cmbxCategorias.getSelectedItem().toString().split(" - ")[0];
+                try {
 			controlador.insertarTabla(txtNombre.getText(),
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
-					cmbxCategorias.getSelectedItem().toString());
+					idCategoria.strip());
 
 			this.dispose();
 			vistaPrincipal.actualizarTablaProductos("");
@@ -105,15 +109,17 @@ public class VistaRegistrar extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    private void setCbxCategoria() {
+    private void setCmbxCategoria() throws SQLException {
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
         cmbxCategorias.setModel(model);
 
-        ArrayList<String> categorias = controladorCategorias.getAllCategories();
+        ResultSet categorias = controladorCategorias.getAllCategories();
         model.addElement("Seleccione una categoría"); // Agrega la opción predeterminada
 
-        for (String categoria : categorias) {
-            model.addElement(categoria); // Agrega los nombres de las categorías al ComboBoxModel
+        while (categorias.next()) {
+            String id = categorias.getString("id");
+            String nombre = categorias.getString("nombre");
+            model.addElement(id+" - "+nombre); // Agrega los nombres de las categorías al ComboBoxModel
         }
     }
     

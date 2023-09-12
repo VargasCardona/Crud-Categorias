@@ -15,7 +15,7 @@ public class ControladorGeneral {
 		if (Utils.estaVacio(nombre)
 				|| Utils.estaVacio(precio)
 				|| Utils.estaVacio(distribuidor)
-				|| Utils.estaVacio(categoria)) {
+				|| categoria.equals("Seleccione una categoría")) {
 			throw new CamposVaciosException();
 		}
 
@@ -24,7 +24,7 @@ public class ControladorGeneral {
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, categoria) VALUES (?, ?, ?, ? ,?)");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, id_categoria) VALUES (?, ?, ?, ? ,?)");
 			ps.setString(1, Utils.generarSku(nombre));
 			ps.setString(2, nombre);
 			ps.setString(3, precio);

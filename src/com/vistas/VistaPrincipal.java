@@ -6,6 +6,8 @@ import com.utils.Utils;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -55,7 +57,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			modelo.addColumn("Nombre:");
 			modelo.addColumn("Precio:");
 			modelo.addColumn("Distribuidor:");
-			modelo.addColumn("Categorias:");
+			modelo.addColumn("Categoria:");
 
 			int[] anchos = {50, 50, 50, 50, 50};
 			for (int i = 0; i < tblProductos.getColumnCount(); i++) {
@@ -297,7 +299,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(bg, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,7 +354,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-		VistaRegistrar vista = new VistaRegistrar(this);
+		VistaRegistrar vista = null;
+            try {
+                vista = new VistaRegistrar(this);
+            } catch (SQLException ex) {
+                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
 		vista.setVisible(true);
     }//GEN-LAST:event_btnRegistrarActionPerformed
 

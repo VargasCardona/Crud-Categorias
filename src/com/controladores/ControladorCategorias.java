@@ -1,6 +1,8 @@
 package com.controladores;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import com.excepciones.CamposVaciosException;
+import com.excepciones.CategoriaEnUsoException;
 import com.excepciones.ElementoNoSeleccionadoException;
 import com.utils.ConexionUtils;
 import com.utils.Utils;
@@ -83,14 +85,15 @@ public class ControladorCategorias {
 
 			ps.execute();
 
-		} catch (SQLException ex) {
+                } catch (SQLIntegrityConstraintViolationException x) {
+                        throw new CategoriaEnUsoException();
+                } catch (SQLException ex) {
 			System.err.print(ex);
 		}
 	}
         
-    public ArrayList<String> getAllCategories() {
-        ArrayList<String> categorias = new ArrayList<>();
-
+    public ResultSet getAllCategories() {
+        
         try {            
             ResultSet rs;
 
@@ -99,13 +102,10 @@ public class ControladorCategorias {
             PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement(query);
             rs = ps.executeQuery();
 
-            while (rs.next()) {
-                String id = rs.getString("id");
-                categorias.add(id);
-            }
+            return rs;
         } catch (SQLException ex) {
             System.err.println(ex.toString());
         }
-        return categorias;
+        return null;
     }
 }
