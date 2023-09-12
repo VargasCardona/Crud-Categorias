@@ -97,6 +97,16 @@ public class VistaPrincipal extends javax.swing.JFrame {
         btnRegistrar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblCategorias = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtNombreCategoria = new javax.swing.JTextField();
+        btnActualizarCategoria = new javax.swing.JButton();
+        btnEliminarCategoria = new javax.swing.JButton();
+        btnRegistrarCategoria = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        lblId = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -104,8 +114,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Buscar por SKU");
-        bg.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 370, 50));
+        jLabel1.setText("Categorías:");
+        bg.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 420, 280, 50));
 
         tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -187,15 +197,74 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel9.setText("Sku:");
         bg.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, -1, -1));
 
+        tblCategorias.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCategoriasMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblCategorias);
+
+        bg.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 370, 210));
+
+        jLabel4.setText("id:");
+        bg.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 490, 30, 20));
+
+        jLabel10.setText("Nombre:");
+        bg.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 530, -1, -1));
+        bg.add(txtNombreCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 530, 200, -1));
+
+        btnActualizarCategoria.setText("Actualizar");
+        btnActualizarCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarCategoriaActionPerformed(evt);
+            }
+        });
+        bg.add(btnActualizarCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 570, 100, -1));
+
+        btnEliminarCategoria.setText("Eliminar");
+        btnEliminarCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarCategoriaActionPerformed(evt);
+            }
+        });
+        bg.add(btnEliminarCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 570, 100, -1));
+
+        btnRegistrarCategoria.setText("Registrar nueva categoría");
+        btnRegistrarCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarCategoriaActionPerformed(evt);
+            }
+        });
+        bg.add(btnRegistrarCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 600, 240, -1));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Buscar por SKU");
+        bg.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 370, 50));
+        bg.add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 470, 200, 20));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg, javax.swing.GroupLayout.DEFAULT_SIZE, 704, Short.MAX_VALUE)
+            .addComponent(bg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(bg, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -273,6 +342,22 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			System.out.println(ex.getMessage());
 		}
     }//GEN-LAST:event_tblProductosMouseClicked
+
+    private void tblCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriasMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblCategoriasMouseClicked
+
+    private void btnActualizarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarCategoriaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnActualizarCategoriaActionPerformed
+
+    private void btnEliminarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCategoriaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminarCategoriaActionPerformed
+
+    private void btnRegistrarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarCategoriaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrarCategoriaActionPerformed
 	
 	private void limpiarCampos() {
 		lblSku.setText("");
@@ -285,22 +370,32 @@ public class VistaPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnActualizarCategoria;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnEliminarCategoria;
     private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton btnRegistrarCategoria;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblResultados;
     private javax.swing.JLabel lblSku;
+    private javax.swing.JTable tblCategorias;
     private javax.swing.JTable tblProductos;
     private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtDistribuidor;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtNombreCategoria;
     private javax.swing.JTextField txtPrecio;
     private javax.swing.JTextField txtSku;
     // End of variables declaration//GEN-END:variables
