@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import javax.swing.DefaultComboBoxModel;
 
 public class ControladorCategorias {
 
@@ -64,7 +63,7 @@ public class ControladorCategorias {
 		try {
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("UPDATE categorias SET nombre = ? WHERE id = ?");
 			ps.setString(1, nombre);
-			ps.setString(5, id);
+			ps.setString(2, id);
 
 			ps.execute();
 

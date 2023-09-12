@@ -407,8 +407,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnActualizarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarCategoriaActionPerformed
 		try {
-			controladorCategorias.actualizarTabla(lblSku.getText(),
-					txtNombre.getText());
+			controladorCategorias.actualizarTabla(lblId.getText(),
+					txtNombreCategoria.getText());
 
 			actualizarTablaCategorias();
 
@@ -420,7 +420,17 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActualizarCategoriaActionPerformed
 
     private void btnEliminarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCategoriaActionPerformed
-		// TODO add your handling code here:
+		try {
+			controladorCategorias.eliminarTabla(lblId.getText());
+
+			actualizarTablaCategorias();
+
+			limpiarCamposCategoria();
+			JOptionPane.showMessageDialog(null, "La categoria se ha eliminado con exito");
+
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		}
     }//GEN-LAST:event_btnEliminarCategoriaActionPerformed
 
     private void btnRegistrarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarCategoriaActionPerformed
