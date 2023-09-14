@@ -64,6 +64,20 @@ public class ControladorProductos {
 		}
 		return null;
 	}
+	
+	public ResultSet filtrarCategoria(String idCategoria){
+		try {
+
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c WHERE c.id = ?");
+			ps.setString(1, idCategoria);
+
+			return ps.executeQuery();
+
+		} catch (SQLException ex) {
+			System.err.print(ex);
+		}
+		return null;
+	}
 
 	public Producto consultarSku(String sku) {
 		try {
