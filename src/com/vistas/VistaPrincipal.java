@@ -7,6 +7,9 @@ import com.modelos.Producto;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,7 +18,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 	ControladorProductos controladorProductos;
 	ControladorCategorias controladorCategorias;
 
-	public VistaPrincipal() {
+	public VistaPrincipal() throws SQLException {
 		controladorProductos = new ControladorProductos();
 		controladorCategorias = new ControladorCategorias();
 
@@ -33,8 +36,24 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		tblCategorias.setDefaultEditor(Object.class, null); // Evitar ediciones en la tabla
 		tblCategorias.getTableHeader().setEnabled(false); // Evitar reorganizaciones de Headers en la tabla
 		tblCategorias.setCellSelectionEnabled(false); // Evitar selecciones en la tabla
-	}
+	
+                setCmbxCategoria();
+        }
+        
+        public void setCmbxCategoria() throws SQLException {
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+		cmbxCategorias.setModel(model);
 
+		ResultSet categorias = controladorCategorias.obtenerCategorias();
+		model.addElement("Seleccione una categoría"); // Agrega la opción predeterminada
+
+		while (categorias.next()) {
+			String id = categorias.getString("id");
+			String nombre = categorias.getString("nombre");
+			model.addElement(id + " - " + nombre); // Agrega los nombres de las categorías al ComboBoxModel
+		}
+	}
+        
 	public void actualizarTablaProductos(String where) {
 		try {
 			DefaultTableModel modelo = new DefaultTableModel();
@@ -42,7 +61,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
 			ResultSet rs = null;
 
-			if (where.isEmpty()) {
+			if (where == null || where.isEmpty()) {
 				rs = controladorProductos.listarProductos();
 			} else {
 				rs = controladorProductos.buscarCoincidencias(where);
@@ -128,12 +147,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txtPrecio = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
-        txtCategoria = new javax.swing.JTextField();
         txtDistribuidor = new javax.swing.JTextField();
         btnEliminar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
-        btnRegistrar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
+        btnRegistrar = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblCategorias = new javax.swing.JTable();
@@ -145,6 +163,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
         btnRegistrarCategoria = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         lblId = new javax.swing.JLabel();
+        cmbxCategorias = new javax.swing.JComboBox<>();
+        btnVerPorCategoria = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -202,7 +222,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         bg.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 250, -1, -1));
         bg.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 170, 200, -1));
         bg.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 130, 200, -1));
-        bg.add(txtCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 250, 200, -1));
         bg.add(txtDistribuidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 210, 200, -1));
 
         btnEliminar.setText("Eliminar");
@@ -221,6 +240,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
         });
         bg.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 290, 100, -1));
 
+        jLabel8.setText("Nombre:");
+        bg.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, -1, -1));
+
         btnRegistrar.setText("Registrar nuevo producto");
         btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -228,9 +250,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
             }
         });
         bg.add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 320, 240, -1));
-
-        jLabel8.setText("Nombre:");
-        bg.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, -1, -1));
 
         jLabel9.setText("Sku:");
         bg.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 90, -1, -1));
@@ -292,6 +311,16 @@ public class VistaPrincipal extends javax.swing.JFrame {
         bg.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 370, 50));
         bg.add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 200, 20));
 
+        bg.add(cmbxCategorias, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 250, 200, 20));
+
+        btnVerPorCategoria.setText("Ver productos por categoría");
+        btnVerPorCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerPorCategoriaActionPerformed(evt);
+            }
+        });
+        bg.add(btnVerPorCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 350, 240, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -319,12 +348,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSkuKeyReleased
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-		try {
+		String idCategoria = cmbxCategorias.getSelectedItem().toString().split(" - ")[0];
+                try {
 			controladorProductos.actualizarProducto(lblSku.getText(),
 					txtNombre.getText(),
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
-					txtCategoria.getText());
+					idCategoria.strip());
 
 			actualizarTablaProductos("");
 
@@ -367,7 +397,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		txtNombre.setText(productoSeleccionado.getNombre());
 		txtPrecio.setText(String.valueOf(productoSeleccionado.getPrecio()));
 		txtDistribuidor.setText(productoSeleccionado.getDistribuidor());
-		txtCategoria.setText(productoSeleccionado.getIdCategoria());
+                
+                int index = 0;
+                for (int i = 0; i < cmbxCategorias.getItemCount(); i++) {
+                    if (cmbxCategorias.getItemAt(i).startsWith(productoSeleccionado.getIdCategoria())) {
+                        index = i;
+                        break;
+                    }
+                }
+                cmbxCategorias.setSelectedIndex(index);
     }//GEN-LAST:event_tblProductosMouseClicked
 
     private void tblCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriasMouseClicked
@@ -384,7 +422,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 					txtNombreCategoria.getText());
 
 			actualizarTablaCategorias();
-
+                        actualizarTablaProductos(null);
+                        txtSku.setText("");
+                        setCmbxCategoria();
 			JOptionPane.showMessageDialog(null, "La categoria se ha actualizado con exito");
 
 		} catch (Exception ex) {
@@ -399,6 +439,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			actualizarTablaCategorias();
 
 			limpiarCamposCategoria();
+                        setCmbxCategoria();
 			JOptionPane.showMessageDialog(null, "La categoria se ha eliminado con exito");
 
 		} catch (Exception ex) {
@@ -411,11 +452,22 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		vista.setVisible(true);
     }//GEN-LAST:event_btnRegistrarCategoriaActionPerformed
 
+    private void btnVerPorCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerPorCategoriaActionPerformed
+                VistaVerPorCategoria vista = null;
+                try {
+                        vista = new VistaVerPorCategoria();
+                } catch (SQLException ex) {
+                        Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+		vista.setVisible(true);
+    }//GEN-LAST:event_btnVerPorCategoriaActionPerformed
+
 	private void limpiarCamposProducto() {
 		lblSku.setText("");
 		txtNombre.setText("");
 		txtPrecio.setText("");
 		txtDistribuidor.setText("");
+                cmbxCategorias.setSelectedIndex(0);
 	}
 
 	private void limpiarCamposCategoria() {
@@ -431,6 +483,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminarCategoria;
     private javax.swing.JButton btnRegistrar;
     private javax.swing.JButton btnRegistrarCategoria;
+    private javax.swing.JButton btnVerPorCategoria;
+    private javax.swing.JComboBox<String> cmbxCategorias;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -448,7 +502,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel lblSku;
     private javax.swing.JTable tblCategorias;
     private javax.swing.JTable tblProductos;
-    private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtDistribuidor;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNombreCategoria;

@@ -73,6 +73,7 @@ public class VistaRegistrarCategoria extends javax.swing.JFrame {
 
 			this.dispose();
 			vistaPrincipal.actualizarTablaCategorias();
+                        vistaPrincipal.setCmbxCategoria();
 			JOptionPane.showMessageDialog(null, "Categoria registrada");
 
 		} catch (Exception ex) {
