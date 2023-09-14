@@ -3,29 +3,31 @@ package com.controladores;
 import com.excepciones.CamposVaciosException;
 import com.excepciones.DoubleInvalidoException;
 import com.excepciones.ElementoNoSeleccionadoException;
+import com.modelos.Producto;
 import com.utils.ConexionUtils;
-import com.utils.Utils;
+import com.utils.GeneralUtils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
-public class ControladorGeneral {
+public class ControladorProductos {
 
-	public void insertarTabla(String nombre, String precio, String distribuidor, String categoria) {
-		if (Utils.estaVacio(nombre)
-				|| Utils.estaVacio(precio)
-				|| Utils.estaVacio(distribuidor)
+	public void insertarProducto(String nombre, String precio, String distribuidor, String categoria) {
+		if (GeneralUtils.estaVacio(nombre)
+				|| GeneralUtils.estaVacio(precio)
+				|| GeneralUtils.estaVacio(distribuidor)
 				|| categoria.equals("Seleccione una categoría")) {
 			throw new CamposVaciosException();
 		}
 
-		if (!Utils.esDouble(precio)) {
+		if (!GeneralUtils.esDouble(precio)) {
 			throw new DoubleInvalidoException();
 		}
 
 		try {
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, id_categoria) VALUES (?, ?, ?, ? ,?)");
-			ps.setString(1, Utils.generarSku(nombre));
+			ps.setString(1, GeneralUtils.generarSku(nombre));
 			ps.setString(2, nombre);
 			ps.setString(3, precio);
 			ps.setString(4, distribuidor);
@@ -38,7 +40,7 @@ public class ControladorGeneral {
 		}
 	}
 
-	public ResultSet listarTabla() {
+	public ResultSet listarProductos() {
 		try {
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos");
 
@@ -51,41 +53,57 @@ public class ControladorGeneral {
 
 	public ResultSet buscarCoincidencias(String where) {
 		try {
+
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos WHERE sku LIKE CONCAT('%',?,'%')");
 			ps.setString(1, where);
 
 			return ps.executeQuery();
+
 		} catch (SQLException ex) {
 			System.err.print(ex);
 		}
 		return null;
 	}
 
-	public ResultSet consultarSku(String sku) {
+	public Producto consultarSku(String sku) {
 		try {
+
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos WHERE sku = ?");
 			ps.setString(1, sku);
 
-			return ps.executeQuery();
+			ResultSet rs = ps.executeQuery();
+			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+
+			int cantidadColumnas = rsMd.getColumnCount();
+
+			Object[] atributos = new Object[cantidadColumnas];
+			while (rs.next()) {
+				for (int i = 0; i < cantidadColumnas; i++) {
+					atributos[i] = rs.getObject(i + 1);
+				}
+			}
+
+			return new Producto((String) atributos[0], (String) atributos[1], (Double) atributos[2], (String) atributos[3], (Integer) atributos[4], (String) atributos[5]);
+
 		} catch (SQLException ex) {
 			System.err.print(ex);
 		}
 		return null;
 	}
 
-	public void actualizarTabla(String sku, String nombre, String precio, String distribuidor, String categoria) {
-		if (Utils.estaVacio(sku)) {
+	public void actualizarProducto(String sku, String nombre, String precio, String distribuidor, String categoria) {
+		if (GeneralUtils.estaVacio(sku)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 
-		if (Utils.estaVacio(nombre)
-				|| Utils.estaVacio(precio)
-				|| Utils.estaVacio(distribuidor)
-				|| Utils.estaVacio(categoria)) {
+		if (GeneralUtils.estaVacio(nombre)
+				|| GeneralUtils.estaVacio(precio)
+				|| GeneralUtils.estaVacio(distribuidor)
+				|| GeneralUtils.estaVacio(categoria)) {
 			throw new CamposVaciosException();
 		}
 
-		if (!Utils.esDouble(precio)) {
+		if (!GeneralUtils.esDouble(precio)) {
 			throw new DoubleInvalidoException();
 		}
 
@@ -104,8 +122,8 @@ public class ControladorGeneral {
 		}
 	}
 
-	public void eliminarTabla(String sku) {
-		if (Utils.estaVacio(sku)) {
+	public void eliminarProducto(String sku) {
+		if (GeneralUtils.estaVacio(sku)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 

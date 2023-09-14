@@ -4,23 +4,25 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import com.excepciones.CamposVaciosException;
 import com.excepciones.CategoriaEnUsoException;
 import com.excepciones.ElementoNoSeleccionadoException;
+import com.modelos.Categoria;
 import com.utils.ConexionUtils;
-import com.utils.Utils;
+import com.utils.GeneralUtils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 
 public class ControladorCategorias {
 
-	public void insertarTabla(String nombre) {
-		if (Utils.estaVacio(nombre)) {
+	public void insertarCategoria(String nombre) {
+		if (GeneralUtils.estaVacio(nombre)) {
 			throw new CamposVaciosException();
 		}
 
 		try {
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO categorias (id, nombre) VALUES (?, ?)");
-			ps.setString(1, Utils.generarSku(nombre));
+			ps.setString(1, GeneralUtils.generarSku(nombre));
 			ps.setString(2, nombre);
 
 			ps.execute();
@@ -30,7 +32,7 @@ public class ControladorCategorias {
 		}
 	}
 
-	public ResultSet listarTabla() {
+	public ResultSet listarCategorias() {
 		try {
 			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias");
 
@@ -38,27 +40,42 @@ public class ControladorCategorias {
 		} catch (SQLException ex) {
 			System.err.print(ex);
 		}
+
 		return null;
 	}
 
-	public ResultSet consultarId(String sku) {
+	public Categoria consultarId(String id) {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias WHERE id = ?");
-			ps.setString(1, sku);
 
-			return ps.executeQuery();
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias WHERE id = ?");
+			ps.setString(1, id);
+
+			ResultSet rs = ps.executeQuery();
+			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+			
+			int cantidadColumnas = rsMd.getColumnCount();
+
+			Object[] atributos = new Object[cantidadColumnas];
+			while (rs.next()) {
+				for (int i = 0; i < cantidadColumnas; i++) {
+					atributos[i] = rs.getObject(i + 1);
+				}
+			}
+			
+			return new Categoria((String) atributos[0], (String) atributos[1]);
+
 		} catch (SQLException ex) {
 			System.err.print(ex);
 		}
 		return null;
 	}
 
-	public void actualizarTabla(String id, String nombre) {
-		if (Utils.estaVacio(id)) {
+	public void actualizarCategoria(String id, String nombre) {
+		if (GeneralUtils.estaVacio(id)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 
-		if (Utils.estaVacio(nombre)) {
+		if (GeneralUtils.estaVacio(nombre)) {
 			throw new CamposVaciosException();
 		}
 
@@ -74,8 +91,8 @@ public class ControladorCategorias {
 		}
 	}
 
-	public void eliminarTabla(String id) {
-		if (Utils.estaVacio(id)) {
+	public void eliminarCategoria(String id) {
+		if (GeneralUtils.estaVacio(id)) {
 			throw new ElementoNoSeleccionadoException();
 		}
 
@@ -85,27 +102,27 @@ public class ControladorCategorias {
 
 			ps.execute();
 
-                } catch (SQLIntegrityConstraintViolationException x) {
-                        throw new CategoriaEnUsoException();
-                } catch (SQLException ex) {
+		} catch (SQLIntegrityConstraintViolationException x) {
+			throw new CategoriaEnUsoException();
+		} catch (SQLException ex) {
 			System.err.print(ex);
 		}
 	}
-        
-    public ResultSet getAllCategories() {
-        
-        try {            
-            ResultSet rs;
 
-            String query = "SELECT * FROM categorias";
+	public ResultSet obtenerCategorias() {
 
-            PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement(query);
-            rs = ps.executeQuery();
+		try {
+			ResultSet rs;
 
-            return rs;
-        } catch (SQLException ex) {
-            System.err.println(ex.toString());
-        }
-        return null;
-    }
+			String query = "SELECT * FROM categorias";
+
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement(query);
+			rs = ps.executeQuery();
+
+			return rs;
+		} catch (SQLException ex) {
+			System.err.println(ex.toString());
+		}
+		return null;
+	}
 }

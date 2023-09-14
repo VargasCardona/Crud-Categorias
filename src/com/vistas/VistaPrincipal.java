@@ -1,24 +1,22 @@
 package com.vistas;
 
 import com.controladores.ControladorCategorias;
-import com.controladores.ControladorGeneral;
-import com.utils.Utils;
+import com.controladores.ControladorProductos;
+import com.modelos.Categoria;
+import com.modelos.Producto;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class VistaPrincipal extends javax.swing.JFrame {
 
-	ControladorGeneral controlador;
+	ControladorProductos controladorProductos;
 	ControladorCategorias controladorCategorias;
 
 	public VistaPrincipal() {
-		controlador = new ControladorGeneral();
+		controladorProductos = new ControladorProductos();
 		controladorCategorias = new ControladorCategorias();
 
 		this.setLocationRelativeTo(null);
@@ -45,13 +43,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			ResultSet rs = null;
 
 			if (where.isEmpty()) {
-				rs = controlador.listarTabla();
+				rs = controladorProductos.listarProductos();
 			} else {
-				rs = controlador.buscarCoincidencias(where);
+				rs = controladorProductos.buscarCoincidencias(where);
 			}
 
 			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-			int cantidadColumnas = rsMd.getColumnCount();
+			int cantidadAtributos = rsMd.getColumnCount();
 
 			modelo.addColumn("SKU:");
 			modelo.addColumn("Nombre:");
@@ -64,12 +62,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
 				tblProductos.getColumnModel().getColumn(i).setPreferredWidth(anchos[1]);
 			}
 
-			Object[] filas = new Object[cantidadColumnas];
+			Object[] atributos = new Object[cantidadAtributos];
 			while (rs.next()) {
-				for (int i = 0; i < cantidadColumnas; i++) {
-					filas[i] = rs.getObject(i + 1);
+				for (int i = 0; i < cantidadAtributos; i++) {
+					atributos[i] = rs.getObject(i + 1);
 				}
-				modelo.addRow(filas);
+				modelo.addRow(atributos);
 			}
 
 			if (modelo.getRowCount() == 0) {
@@ -88,10 +86,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			DefaultTableModel modelo = new DefaultTableModel();
 			tblCategorias.setModel(modelo);
 
-			ResultSet rs = controladorCategorias.listarTabla();
-
+			ResultSet rs = controladorCategorias.listarCategorias();
 			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-			int cantidadColumnas = rsMd.getColumnCount();
+			int cantidadAtributos = rsMd.getColumnCount();
 
 			modelo.addColumn("ID:");
 			modelo.addColumn("Nombre:");
@@ -101,12 +98,12 @@ public class VistaPrincipal extends javax.swing.JFrame {
 				tblCategorias.getColumnModel().getColumn(i).setPreferredWidth(anchos[1]);
 			}
 
-			Object[] filas = new Object[cantidadColumnas];
+			Object[] atributos = new Object[cantidadAtributos];
 			while (rs.next()) {
-				for (int i = 0; i < cantidadColumnas; i++) {
-					filas[i] = rs.getObject(i + 1);
+				for (int i = 0; i < cantidadAtributos; i++) {
+					atributos[i] = rs.getObject(i + 1);
 				}
-				modelo.addRow(filas);
+				modelo.addRow(atributos);
 			}
 
 		} catch (SQLException e) {
@@ -323,7 +320,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
 		try {
-			controlador.actualizarTabla(lblSku.getText(),
+			controladorProductos.actualizarProducto(lblSku.getText(),
 					txtNombre.getText(),
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
@@ -340,7 +337,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 		try {
-			controlador.eliminarTabla(lblSku.getText());
+			controladorProductos.eliminarProducto(lblSku.getText());
 
 			txtSku.setText("");
 			actualizarTablaProductos("");
@@ -354,69 +351,36 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-		VistaRegistrar vista = null;
-            try {
-                vista = new VistaRegistrar(this);
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-            }
-		vista.setVisible(true);
+		try {
+			VistaRegistrarProducto vista = new VistaRegistrarProducto(this);
+			vista.setVisible(true);
+		} catch (SQLException ex) {
+			System.out.println(ex.getMessage());
+		}
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void tblProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductosMouseClicked
 		String sku = String.valueOf(tblProductos.getValueAt(tblProductos.getSelectedRow(), 0));
-		try {
+		Producto productoSeleccionado = controladorProductos.consultarSku(sku);
 
-			ResultSet rs = controlador.consultarSku(sku);
-			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-
-			int cantidadColumnas = rsMd.getColumnCount();
-
-			Object[] filas = new Object[cantidadColumnas];
-			while (rs.next()) {
-				for (int i = 0; i < cantidadColumnas; i++) {
-					filas[i] = rs.getObject(i + 1);
-				}
-			}
-
-			lblSku.setText((String) filas[0]);
-			txtNombre.setText((String) filas[1]);
-			txtPrecio.setText(String.valueOf((Double) filas[2]));
-			txtDistribuidor.setText((String) filas[3]);
-			txtCategoria.setText((String) filas[4]);
-
-		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
-		}
+		lblSku.setText(productoSeleccionado.getSku());
+		txtNombre.setText(productoSeleccionado.getNombre());
+		txtPrecio.setText(String.valueOf(productoSeleccionado.getPrecio()));
+		txtDistribuidor.setText(productoSeleccionado.getDistribuidor());
+		txtCategoria.setText(productoSeleccionado.getIdCategoria());
     }//GEN-LAST:event_tblProductosMouseClicked
 
     private void tblCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriasMouseClicked
 		String id = String.valueOf(tblCategorias.getValueAt(tblCategorias.getSelectedRow(), 0));
-		try {
+		Categoria categoriaSeleccionada = controladorCategorias.consultarId(id);
 
-			ResultSet rs = controladorCategorias.consultarId(id);
-			ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
-
-			int cantidadColumnas = rsMd.getColumnCount();
-
-			Object[] filas = new Object[cantidadColumnas];
-			while (rs.next()) {
-				for (int i = 0; i < cantidadColumnas; i++) {
-					filas[i] = rs.getObject(i + 1);
-				}
-			}
-
-			lblId.setText((String) filas[0]);
-			txtNombreCategoria.setText((String) filas[1]);
-
-		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
-		}
+		lblId.setText(categoriaSeleccionada.getId());
+		txtNombreCategoria.setText(categoriaSeleccionada.getNombre());
     }//GEN-LAST:event_tblCategoriasMouseClicked
 
     private void btnActualizarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarCategoriaActionPerformed
 		try {
-			controladorCategorias.actualizarTabla(lblId.getText(),
+			controladorCategorias.actualizarCategoria(lblId.getText(),
 					txtNombreCategoria.getText());
 
 			actualizarTablaCategorias();
@@ -430,7 +394,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     private void btnEliminarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCategoriaActionPerformed
 		try {
-			controladorCategorias.eliminarTabla(lblId.getText());
+			controladorCategorias.eliminarCategoria(lblId.getText());
 
 			actualizarTablaCategorias();
 
@@ -443,7 +407,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarCategoriaActionPerformed
 
     private void btnRegistrarCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarCategoriaActionPerformed
-		VistaRegistrarCategorias vista = new VistaRegistrarCategorias(this);
+		VistaRegistrarCategoria vista = new VistaRegistrarCategoria(this);
 		vista.setVisible(true);
     }//GEN-LAST:event_btnRegistrarCategoriaActionPerformed
 

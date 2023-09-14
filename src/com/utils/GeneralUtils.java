@@ -2,7 +2,7 @@ package com.utils;
 
 import static java.lang.String.valueOf;
 
-public class Utils {
+public class GeneralUtils {
 	
 	/**
 	 * Verifica si el String ingresado es un double.

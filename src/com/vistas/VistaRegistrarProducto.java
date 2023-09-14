@@ -1,30 +1,29 @@
 package com.vistas;
 
 import com.controladores.ControladorCategorias;
-import com.controladores.ControladorGeneral;
-import java.util.ArrayList;
+import com.controladores.ControladorProductos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class VistaRegistrar extends javax.swing.JFrame {
+public class VistaRegistrarProducto extends javax.swing.JFrame {
 
-	ControladorGeneral controlador;
-        ControladorCategorias controladorCategorias;
+	ControladorProductos controlador;
+	ControladorCategorias controladorCategorias;
 	VistaPrincipal vistaPrincipal;
 
-	public VistaRegistrar(VistaPrincipal vistaPrincipal) throws SQLException {
-		controlador = new ControladorGeneral();
-                controladorCategorias = new ControladorCategorias();
+	public VistaRegistrarProducto(VistaPrincipal vistaPrincipal) throws SQLException {
+		controlador = new ControladorProductos();
+		controladorCategorias = new ControladorCategorias();
 		this.vistaPrincipal = vistaPrincipal;
 
 		this.setLocationRelativeTo(null);
 		setTitle("Registrar Producto");
-                
-                initComponents();
-                setCmbxCategoria();
+
+		initComponents();
+		setCmbxCategoria();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cerrar unicamente la ventana actual
 	}
 
@@ -94,8 +93,8 @@ public class VistaRegistrar extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 		String idCategoria = cmbxCategorias.getSelectedItem().toString().split(" - ")[0];
-                try {
-			controlador.insertarTabla(txtNombre.getText(),
+		try {
+			controlador.insertarProducto(txtNombre.getText(),
 					txtPrecio.getText(),
 					txtDistribuidor.getText(),
 					idCategoria.strip());
@@ -109,20 +108,20 @@ public class VistaRegistrar extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    private void setCmbxCategoria() throws SQLException {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        cmbxCategorias.setModel(model);
+	private void setCmbxCategoria() throws SQLException {
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+		cmbxCategorias.setModel(model);
 
-        ResultSet categorias = controladorCategorias.getAllCategories();
-        model.addElement("Seleccione una categoría"); // Agrega la opción predeterminada
+		ResultSet categorias = controladorCategorias.obtenerCategorias();
+		model.addElement("Seleccione una categoría"); // Agrega la opción predeterminada
 
-        while (categorias.next()) {
-            String id = categorias.getString("id");
-            String nombre = categorias.getString("nombre");
-            model.addElement(id+" - "+nombre); // Agrega los nombres de las categorías al ComboBoxModel
-        }
-    }
-    
+		while (categorias.next()) {
+			String id = categorias.getString("id");
+			String nombre = categorias.getString("nombre");
+			model.addElement(id + " - " + nombre); // Agrega los nombres de las categorías al ComboBoxModel
+		}
+	}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton btnRegistrar;

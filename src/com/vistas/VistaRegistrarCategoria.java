@@ -4,12 +4,12 @@ import com.controladores.ControladorCategorias;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class VistaRegistrarCategorias extends javax.swing.JFrame {
+public class VistaRegistrarCategoria extends javax.swing.JFrame {
 
 	ControladorCategorias controlador;
 	VistaPrincipal vistaPrincipal;
 
-	public VistaRegistrarCategorias(VistaPrincipal vistaPrincipal) {
+	public VistaRegistrarCategoria(VistaPrincipal vistaPrincipal) {
 		controlador = new ControladorCategorias();
 		this.vistaPrincipal = vistaPrincipal;
 
@@ -69,7 +69,7 @@ public class VistaRegistrarCategorias extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 		try {
-			controlador.insertarTabla(txtNombre.getText());
+			controlador.insertarCategoria(txtNombre.getText());
 
 			this.dispose();
 			vistaPrincipal.actualizarTablaCategorias();
