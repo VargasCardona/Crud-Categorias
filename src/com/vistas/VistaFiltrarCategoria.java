@@ -2,20 +2,23 @@ package com.vistas;
 
 import com.controladores.ControladorCategorias;
 import com.controladores.ControladorProductos;
+import com.modelos.Producto;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
-public class VistaVerPorCategoria extends javax.swing.JFrame {
+public class VistaFiltrarCategoria extends javax.swing.JFrame {
 
 	ControladorProductos controladorProductos;
 	ControladorCategorias controladorCategorias;
+	VistaPrincipal vistaPrincipal;
 
-	public VistaVerPorCategoria() throws SQLException {
+	public VistaFiltrarCategoria(VistaPrincipal vistaPrincipal) throws SQLException {
 		controladorProductos = new ControladorProductos();
 		controladorCategorias = new ControladorCategorias();
+		this.vistaPrincipal = vistaPrincipal;
 
 		this.setLocationRelativeTo(null);
 		setTitle("Buscar Productos");
@@ -153,9 +156,6 @@ public class VistaVerPorCategoria extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tblProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductosMouseClicked
-    }//GEN-LAST:event_tblProductosMouseClicked
-
     private void cmbxCategoriasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbxCategoriasItemStateChanged
         if (cmbxCategorias.getSelectedIndex() == 0) {
             actualizarTablaProductos(null);
@@ -166,6 +166,11 @@ public class VistaVerPorCategoria extends javax.swing.JFrame {
         ResultSet filtrarCategoria = controladorProductos.filtrarCategoria(idCategoria);
         actualizarTablaProductos(filtrarCategoria);
     }//GEN-LAST:event_cmbxCategoriasItemStateChanged
+
+    private void tblProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductosMouseClicked
+        String sku = String.valueOf(tblProductos.getValueAt(tblProductos.getSelectedRow(), 0));
+		vistaPrincipal.tblProductosMouseClicked(null, sku);
+    }//GEN-LAST:event_tblProductosMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;

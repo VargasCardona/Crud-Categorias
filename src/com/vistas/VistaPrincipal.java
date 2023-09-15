@@ -17,6 +17,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
 	ControladorProductos controladorProductos;
 	ControladorCategorias controladorCategorias;
+	VistaFiltrarCategoria vistaFiltrarCategoria;
 
 	public VistaPrincipal() throws SQLException {
 		controladorProductos = new ControladorProductos();
@@ -55,6 +56,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 	}
         
 	public void actualizarTablaProductos(String where) {
+		
 		try {
 			DefaultTableModel modelo = new DefaultTableModel();
 			tblProductos.setModel(modelo);
@@ -188,7 +190,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         ));
         tblProductos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblProductosMouseClicked(evt);
+                tblProductosMouseClicked(evt, null);
             }
         });
         jScrollPane1.setViewportView(tblProductos);
@@ -357,6 +359,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
 					idCategoria.strip());
 
 			actualizarTablaProductos("");
+			
+			if (vistaFiltrarCategoria != null){
+				vistaFiltrarCategoria.actualizarTablaProductos(null);
+			}
 
 			JOptionPane.showMessageDialog(null, "El producto se ha actualizado con exito");
 
@@ -374,6 +380,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
 			limpiarCamposProducto();
 			JOptionPane.showMessageDialog(null, "Se ha eliminado con exito");
+			
+			if (vistaFiltrarCategoria != null){
+				vistaFiltrarCategoria.actualizarTablaProductos(null);
+			}
 
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -389,8 +399,15 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    private void tblProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductosMouseClicked
-		String sku = String.valueOf(tblProductos.getValueAt(tblProductos.getSelectedRow(), 0));
+    public void tblProductosMouseClicked(java.awt.event.MouseEvent evt, String skuRecibido) {//GEN-FIRST:event_tblProductosMouseClicked
+		String sku = null;
+		if (skuRecibido == null){
+			sku = String.valueOf(tblProductos.getValueAt(tblProductos.getSelectedRow(), 0));
+		} else {
+			sku = skuRecibido;
+		}
+		
+		
 		Producto productoSeleccionado = controladorProductos.consultarSku(sku);
 
 		lblSku.setText(productoSeleccionado.getSku());
@@ -453,9 +470,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistrarCategoriaActionPerformed
 
     private void btnVerPorCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerPorCategoriaActionPerformed
-                VistaVerPorCategoria vista = null;
+                VistaFiltrarCategoria vista = null;
                 try {
-                        vista = new VistaVerPorCategoria();
+                        vista = new VistaFiltrarCategoria(this);
+						vistaFiltrarCategoria = vista;
                 } catch (SQLException ex) {
                         Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                 }
