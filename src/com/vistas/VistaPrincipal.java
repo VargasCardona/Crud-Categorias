@@ -360,9 +360,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
 			actualizarTablaProductos("");
 			
-			if (vistaFiltrarCategoria != null){
-				vistaFiltrarCategoria.actualizarTablaProductos(null);
-			}
+			actualizarVistaFiltro();
 
 			JOptionPane.showMessageDialog(null, "El producto se ha actualizado con exito");
 
@@ -381,9 +379,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
 			limpiarCamposProducto();
 			JOptionPane.showMessageDialog(null, "Se ha eliminado con exito");
 			
-			if (vistaFiltrarCategoria != null){
-				vistaFiltrarCategoria.actualizarTablaProductos(null);
-			}
+			actualizarVistaFiltro();
 
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -473,7 +469,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 VistaFiltrarCategoria vista = null;
                 try {
                         vista = new VistaFiltrarCategoria(this);
-						vistaFiltrarCategoria = vista;
+                        vistaFiltrarCategoria = vista;
                 } catch (SQLException ex) {
                         Logger.getLogger(VistaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -492,6 +488,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		lblId.setText("");
 		txtNombreCategoria.setText("");
 	}
+        
+        public void actualizarVistaFiltro() {
+                if (vistaFiltrarCategoria != null){
+			vistaFiltrarCategoria.actualizarTablaProductos(null);
+                        vistaFiltrarCategoria.limpiarCmbx();
+		}
+        }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;

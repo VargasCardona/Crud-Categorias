@@ -89,6 +89,10 @@ public class VistaFiltrarCategoria extends javax.swing.JFrame {
 		}
 	}
 
+        public void limpiarCmbx() {
+                cmbxCategorias.setSelectedIndex(0);
+        }
+        
 	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

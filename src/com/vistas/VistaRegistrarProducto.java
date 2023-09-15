@@ -101,6 +101,7 @@ public class VistaRegistrarProducto extends javax.swing.JFrame {
 
 			this.dispose();
 			vistaPrincipal.actualizarTablaProductos("");
+                        vistaPrincipal.actualizarVistaFiltro();
 			JOptionPane.showMessageDialog(null, "Producto registrado");
 
 		} catch (Exception ex) {
