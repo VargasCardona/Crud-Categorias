@@ -438,6 +438,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                         actualizarTablaProductos(null);
                         txtSku.setText("");
                         setCmbxCategoria();
+                        actualizarVistaFiltro();
+                        
 			JOptionPane.showMessageDialog(null, "La categoria se ha actualizado con exito");
 
 		} catch (Exception ex) {
@@ -453,6 +455,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
 			limpiarCamposCategoria();
                         setCmbxCategoria();
+                        
+                        actualizarVistaFiltro();
+                        
 			JOptionPane.showMessageDialog(null, "La categoria se ha eliminado con exito");
 
 		} catch (Exception ex) {
@@ -489,8 +494,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 		txtNombreCategoria.setText("");
 	}
         
-        public void actualizarVistaFiltro() {
+        public void actualizarVistaFiltro() throws SQLException {
                 if (vistaFiltrarCategoria != null){
+                        vistaFiltrarCategoria.setCmbxCategoria();
 			vistaFiltrarCategoria.actualizarTablaProductos(null);
                         vistaFiltrarCategoria.limpiarCmbx();
 		}
