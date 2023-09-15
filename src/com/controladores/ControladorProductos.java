@@ -42,7 +42,7 @@ public class ControladorProductos {
 
 	public ResultSet listarProductos() {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id");
 
 			return ps.executeQuery();
 		} catch (SQLException ex) {
@@ -54,7 +54,7 @@ public class ControladorProductos {
 	public ResultSet buscarCoincidencias(String where) {
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id WHERE sku LIKE CONCAT('%',?,'%')");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id WHERE sku LIKE CONCAT('%',?,'%')");
 			ps.setString(1, where);
 
 			return ps.executeQuery();
@@ -68,7 +68,7 @@ public class ControladorProductos {
 	public ResultSet filtrarCategoria(String idCategoria){
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id WHERE c.id = ?");
+			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id WHERE c.id = ?");
 			ps.setString(1, idCategoria);
 
 			return ps.executeQuery();
