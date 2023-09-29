@@ -5,14 +5,21 @@ import com.excepciones.CamposVaciosException;
 import com.excepciones.CategoriaEnUsoException;
 import com.excepciones.ElementoNoSeleccionadoException;
 import com.modelos.Categoria;
-import com.utils.ConexionUtils;
+import com.singleton.DatabaseSingleton;
 import com.utils.GeneralUtils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import org.mariadb.jdbc.Connection;
 
 public class ControladorCategorias {
+	
+	private Connection connection;
+
+	public ControladorCategorias() {
+		connection = DatabaseSingleton.getInstance().getConnection();
+	}
 
 	public void insertarCategoria(String nombre) {
 		if (GeneralUtils.estaVacio(nombre)) {
@@ -20,7 +27,7 @@ public class ControladorCategorias {
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO categorias (id, nombre) VALUES (?, ?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO categorias (id, nombre) VALUES (?, ?)");
 			ps.setString(1, GeneralUtils.generarSku(nombre));
 			ps.setString(2, nombre);
 
@@ -33,7 +40,7 @@ public class ControladorCategorias {
 
 	public ResultSet listarCategorias() {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM categorias");
 
 			return ps.executeQuery();
 		} catch (SQLException ex) {
@@ -46,7 +53,7 @@ public class ControladorCategorias {
 	public Categoria consultarId(String id) {
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM categorias WHERE id = ?");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM categorias WHERE id = ?");
 			ps.setString(1, id);
 
 			ResultSet rs = ps.executeQuery();
@@ -79,7 +86,7 @@ public class ControladorCategorias {
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("UPDATE categorias SET nombre = ? WHERE id = ?");
+			PreparedStatement ps = connection.prepareStatement("UPDATE categorias SET nombre = ? WHERE id = ?");
 			ps.setString(1, nombre);
 			ps.setString(2, id);
 
@@ -96,7 +103,7 @@ public class ControladorCategorias {
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("DELETE FROM categorias WHERE id = ?");
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM categorias WHERE id = ?");
 			ps.setString(1, id);
 
 			ps.execute();
@@ -115,7 +122,7 @@ public class ControladorCategorias {
 
 			String query = "SELECT * FROM categorias";
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement(query);
+			PreparedStatement ps = connection.prepareStatement(query);
 			rs = ps.executeQuery();
 
 			return rs;

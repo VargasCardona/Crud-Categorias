@@ -4,15 +4,22 @@ import com.excepciones.CamposVaciosException;
 import com.excepciones.DoubleInvalidoException;
 import com.excepciones.ElementoNoSeleccionadoException;
 import com.modelos.Producto;
-import com.utils.ConexionUtils;
+import com.singleton.DatabaseSingleton;
 import com.utils.GeneralUtils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import org.mariadb.jdbc.Connection;
 
 public class ControladorProductos {
 
+	private Connection connection;
+
+	public ControladorProductos() {
+		connection = DatabaseSingleton.getInstance().getConnection();
+	}
+	
 	public void insertarProducto(String nombre, String precio, String distribuidor, String categoria) {
 		if (GeneralUtils.estaVacio(nombre)
 				|| GeneralUtils.estaVacio(precio)
@@ -21,12 +28,13 @@ public class ControladorProductos {
 			throw new CamposVaciosException();
 		}
 
-		if (!GeneralUtils.esDouble(precio)) {
+		if (!GeneralUtils.esDouble(precio)
+				|| Double.valueOf(precio) < 0) {
 			throw new DoubleInvalidoException();
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, id_categoria) VALUES (?, ?, ?, ? ,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO productos (sku, nombre, precio, distribuidor, id_categoria) VALUES (?, ?, ?, ? ,?)");
 			ps.setString(1, GeneralUtils.generarSku(nombre));
 			ps.setString(2, nombre);
 			ps.setString(3, precio);
@@ -42,7 +50,7 @@ public class ControladorProductos {
 
 	public ResultSet listarProductos() {
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id");
+			PreparedStatement ps = connection.prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id");
 
 			return ps.executeQuery();
 		} catch (SQLException ex) {
@@ -54,7 +62,7 @@ public class ControladorProductos {
 	public ResultSet buscarCoincidencias(String where) {
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id WHERE sku LIKE CONCAT('%',?,'%')");
+			PreparedStatement ps = connection.prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id WHERE sku LIKE CONCAT('%',?,'%')");
 			ps.setString(1, where);
 
 			return ps.executeQuery();
@@ -68,7 +76,7 @@ public class ControladorProductos {
 	public ResultSet filtrarCategoria(String idCategoria){
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN categorias as c ON p.id_categoria = c.id WHERE c.id = ?");
+			PreparedStatement ps = connection.prepareStatement("SELECT p.sku, p.nombre, p.precio, p.distribuidor, c.nombre FROM productos as p INNER JOIN Categorias as c ON p.id_categoria = c.id WHERE c.id = ?");
 			ps.setString(1, idCategoria);
 
 			return ps.executeQuery();
@@ -82,7 +90,7 @@ public class ControladorProductos {
 	public Producto consultarSku(String sku) {
 		try {
 
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("SELECT * FROM productos WHERE sku = ?");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM productos WHERE sku = ?");
 			ps.setString(1, sku);
 
 			ResultSet rs = ps.executeQuery();
@@ -117,12 +125,13 @@ public class ControladorProductos {
 			throw new CamposVaciosException();
 		}
 
-		if (!GeneralUtils.esDouble(precio)) {
+		if (!GeneralUtils.esDouble(precio)
+				|| Double.valueOf(precio) < 0) {
 			throw new DoubleInvalidoException();
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("UPDATE productos SET nombre = ?, precio = ?, distribuidor = ?, id_categoria = ? WHERE sku = ?");
+			PreparedStatement ps = connection.prepareStatement("UPDATE productos SET nombre = ?, precio = ?, distribuidor = ?, id_categoria = ? WHERE sku = ?");
 			ps.setString(1, nombre);
 			ps.setString(2, precio);
 			ps.setString(3, distribuidor);
@@ -142,7 +151,7 @@ public class ControladorProductos {
 		}
 
 		try {
-			PreparedStatement ps = ConexionUtils.realizarConexion().prepareStatement("DELETE FROM productos WHERE sku = ?");
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM productos WHERE sku = ?");
 			ps.setString(1, sku);
 
 			ps.execute();
